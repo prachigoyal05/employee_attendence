@@ -1,0 +1,41 @@
+
+{% extends "accounts/admin_dashboard.html" %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+{% block content %}
+<div class="min-h-screen bg-gray-900 text-white d-flex flex-column align-items-center py-8 px-4">
+<h3 class="text-2xl font-semibold mb-6">Export Attendance CSV</h3>
+
+
+<form action="{% url 'export_attendance' %}" method="get" 
+ class="export-form border rounded-3 p-4"
+      style="max-width:480px;">
+  
+    <input type="hidden" name="download" value="1"><!-- tells view to stream CSV -->
+
+    <div class="mb-3">
+        <label class="form-label text-white">From</label>
+        <input type="date" name="start_date" class="form-control">
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label text-white">To</label>
+        <input type="date" name="end_date" class="form-control">
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label text-white">Employee</label>
+        <select name="user_id" class="form-select">
+            <option value="">All employees</option>
+            {% for u in users %}
+                <option value="{{ u.id }}">{{ u.username }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <button class="btn btn-success w-100">
+        <i class="fa fa-download me-1"></i> Download CSV
+    </button>
+</form>
+{% endblock %}

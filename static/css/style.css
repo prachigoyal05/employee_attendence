@@ -1,0 +1,153 @@
+:root {
+    --light-blue: #60a5fa; /* Tailwind blue-400 */
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.navbar-brand {
+    font-size: 1.5rem;
+}
+
+
+.form-container {
+    width: 600px;
+    margin: 50px auto;
+    background-color: #0f172a;
+    padding: 40px;
+    border-radius: 6px; /* Reduced curve for more square-like look */
+    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.1);
+    color: var(--light-blue); 
+}
+
+h2 {
+    text-align: center;
+    margin-bottom: 30px;
+    font-weight: bold;
+    color: #eaeaea;
+}
+
+form .form-group {
+    margin-bottom: 20px;
+}
+
+label {
+    font-weight: 500;
+    display: block;
+    margin-bottom: 5px;
+    color: var(--light-blue); 
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.helptext {
+    font-size: 12px;
+    color: var(--light-blue);
+    display: block;
+    margin-top: 5px;
+    margin-bottom: 10px;
+    line-height: 1.4;
+}
+
+input[type="submit"],
+button {
+    width: 100%;
+    padding: 12px;
+    background-color: #0d6efd;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-weight: bold;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+input[type="submit"]:hover,
+button:hover {
+    background-color: #0b5ed7;
+}
+
+
+/*--login page--*/
+body {
+    background-color: #0f172a;
+    color: #e2e8f0;
+    padding-top: 80px; /* Push content below navbar */
+}
+
+.export-form {
+    background-color: #1e1e2f;
+    padding: 20px;
+    border-radius: 12px;
+    margin-top: 30px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.5);
+    color: white;
+}
+
+.form-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.form-row label {
+    font-weight: 500;
+    margin-bottom: 5px;
+}
+
+.form-control {
+    padding: 8px 12px;
+    border: none;
+    border-radius: 6px;
+    background-color: #2b2b3d;
+    color: white;
+    width: 180px;
+}
+
+.form-control:focus {
+    outline: 2px solid #00b894;
+}
+
+.btn-export {
+    padding: 10px 20px;
+    background-color: #00b894;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.btn-export:hover {
+    background-color: #00a383;
+}
+
+/* dark card that matches sidebar blue—not Bootstrap’s nearly black #212529 */
+.export-form {
+    background:#1e293b !important;
+    color:#37314a;
+}
+.export-form label { font-weight:500; }
+.export-form .form-control,
+.export-form .form-select {
+    background:#374151;
+    color:#fff;
+    border:none;
+}
+.export-form .form-control:focus,
+.export-form .form-select:focus {
+    outline:2px solid #2563eb;      /* blue‑600 border on focus */
+}
+

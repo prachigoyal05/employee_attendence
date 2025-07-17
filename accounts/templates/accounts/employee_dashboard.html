@@ -1,0 +1,392 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Employee Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 text-white">
+    <nav class="flex justify-between items-center p-4 bg-blue-800">
+        <h1 class="text-xl font-bold">Employee Dashboard</h1>
+         <!-- <a href="{% url 'logout' %}" class="bg-red-600 px-4 py-1 rounded hover:bg-red-700"></a> -->
+    </nav> 
+
+    <!-- Sidebar -->
+  <!-- Dashboard Layout -->
+<div class="flex">
+  <!-- Sidebar -->
+   <aside class="w-64 bg-[#1e293b] h-screen p-6 shadow-xl flex flex-col justify-between">
+        <div>
+            <h2 class="text-xl font-bold text-white mb-6">Employee Menu</h2>
+            <ul class="space-y-4">
+                <li>
+                    <button onclick="showSection('home')" class="w-full flex items-center p-3 bg-blue-600 rounded hover:bg-blue-700">
+                        🏠 <span class="ml-2">Home</span>
+                    </button>
+                </li>
+                <!-- <li>
+                    <button onclick="showSection('attendance')" class="w-full flex items-center p-3 bg-green-600 rounded hover:bg-green-700">
+                        🕒 <span class="ml-2">Attendance</span>
+                    </button>
+                </li> -->
+                <li>
+                    <button onclick="showSection('break')" class="w-full flex items-center p-3 bg-indigo-600 text-black rounded hover:bg-indigo-700">
+                        ☕ <span class="ml-2">Break</span>
+                    </button>
+                </li>
+                <li>
+                    <button onclick="showSection('info')" class="w-full flex items-center p-3 bg-blue-600 rounded hover:bg-blue-700">
+                        👤 <span class="ml-2">Personal Info</span>
+                    </button>
+                </li>
+                <li>
+                    <button onclick="showSection('settings')" class="w-full flex items-center p-3 bg-indigo-600 rounded hover:bg-indigo-700">
+                        ⚙️ <span class="ml-2">Settings</span>
+                    </button>
+                </li>
+            </ul>
+        </div>
+
+        <div>
+            <a href="{% url 'logout' %}" class="w-full flex items-center justify-center p-3 bg-red-600 rounded hover:bg-red-700">
+                🚪 <span class="ml-2">Logout</span>
+            </a>
+        </div>
+    </aside>
+
+<!-- Main Content -->
+  <main class="flex-1 p-6 space-y-6">
+   <div id="home" class="section">
+   <h2 class="text-2xl font-semibold">Welcome, {{ employee.username }} 👋</h2>
+
+    <div class="grid grid-cols-3 gap-4 text-center mt-4">
+        <div class="bg-blue-500 p-4 rounded">Present Days: 15</div>
+        <div class="bg-blue-500 p-4 rounded">Leaves Taken: 2</div>
+        <div class="bg-blue-500 p-4 rounded">Pending Approvals: 1</div>
+    </div>
+  
+<div class="mt-6">
+    {% if not today_attendance.check_in %}
+        <form action="{% url 'mark_attendance' %}" method="post">
+            {% csrf_token %}
+            <button class="bg-green-500 text-white px-4 py-2 rounded">Check In</button>
+        </form>
+    {% elif not today_attendance.checkout %}
+        <form action="{% url 'checkout' %}" method="post">
+            {% csrf_token %}
+            <button class="bg-red-500 text-white px-4 py-2 rounded">Check Out</button>
+        </form>
+    {% else %}
+        <p class="text-blue-400">✔️ You have completed today's attendance.</p>
+    {% endif %}
+</div>
+
+
+<!-- Calendar Attendance Table -->
+<h3 class="text-blue-300 mt-6 mb-2">📅 Attendance Calendar</h3>
+<table class="w-full text-center bg-gray-700 rounded">
+    <tr>
+        <th class="p-2 text-white">Date</th>
+        <th class="p-2 text-white">Status</th>
+    </tr>
+    {% for log in logs %}
+    <tr>
+        <td class="p-2 text-gray-300">{{ log.date }}</td>
+        <td class="p-2">
+           {% if log.status == 'Present' %}
+            <span class="text-green-400">✔️</span>
+        {% elif log.status == 'Pending' %}
+            <span class="text-yellow-400">⏳</span>
+        {% else %}
+            <span class="text-red-400">❌</span>
+        {% endif %}
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+
+    <!-- Live Clock -->
+    <div class="bg-gray-800 p-4 rounded mt-4">
+        <h3 class="text-lg font-semibold mb-2 text-blue-400">Live Clock</h3>
+        <p id="clock" class="text-xl font-mono text-white"></p>
+    </div>
+
+    <!-- ✅ Today's Attendance Summary -->
+    <div class="bg-gray-800 p-4 rounded mt-4">
+        <h3 class="text-lg font-semibold mb-2 text-blue-400">Today’s Summary</h3>
+        <p>✔️ <strong>Check-In:</strong> {{ attendance.check_in|default:"Not yet" }}</p>
+        <p>☕ <strong>Break Taken:</strong>
+            {% if attendance.break_duration %}
+                {{ attendance.break_duration }}
+            {% else %}
+                Not Taken
+            {% endif %}
+        </p>
+        <p>⏹️ <strong>Checkout:</strong> {{ attendance.checkout|default:"Not yet" }}</p>
+    </div>
+</div>
+
+
+    <!-- Attendance Section -->
+    <div id="attendance" class="section hidden">
+        <h3 class="text-lg font-semibold text-blue-400 mb-4">Mark Attendance</h3>
+        <button id="checkinBtn" class="bg-blue-600 px-4 py-2 rounded hover:bg-blue-700">✔️ Check In</button>
+        <p id="checkinTime" class="mt-2 text-green-400"></p>
+        <button id="checkoutBtn" class="bg-red-600 px-4 py-2 rounded hover:bg-red-700">❌ Check Out</button>
+        <p id="checkoutTime" class="mt-2 text-red-400"></p>
+    </div>
+     
+    
+
+    
+
+   <!-- Break Section -->
+<div id="break" class="section hidden bg-gray-900 text-white p-6 rounded-lg shadow-md">
+
+    <h3 class="text-2xl font-bold text-blue-400 mb-4">🕒 Break Timer</h3>
+
+    <!-- Buttons -->
+    <div class="flex gap-4 mb-4">
+        <!-- <form method="POST" action="{% url 'start_break' %}"> -->
+            {% csrf_token %}
+            <button type="submit" id="startBreak" class="bg-yellow-500 hover:bg-yellow-600 text-black font-semibold px-4 py-2 rounded">
+                ☕ Start Break
+            </button>
+        <!-- </form> -->
+
+        <!-- <form method="POST" action="{% url 'end_break' %}"> -->
+            {% csrf_token %}
+            <button type="submit" id="endBreak" class="bg-green-500 hover:bg-green-600 text-white font-semibold px-4 py-2 rounded">
+                ✅ End Break
+            </button>
+        <!-- </form> -->
+    </div>
+
+    <!-- Live Timer -->
+    <p class="text-sm text-gray-300 mb-2">
+        <strong>Break Duration:</strong>
+        <span id="breakTimer" class="font-mono text-white">00:00:00</span>
+    </p>
+
+    <!-- Remaining Break Time -->
+    <div class="bg-yellow-100 text-yellow-800 font-semibold p-3 rounded mb-4 shadow-inner">
+        ⏰ Remaining Break Time: {{ remaining_break }}
+    </div>
+
+    <!-- Break Sessions -->
+    <div class="bg-white p-4 rounded shadow-md text-black">
+        <h3 class="text-lg font-semibold mb-2">🗒️ Today's Break Sessions</h3>
+        {% if break_sessions %}
+            <ul class="list-disc pl-6">
+                {% for session in break_sessions %}
+                    <li>
+                        {{ session.start_time|date:"H:i:s" }} –
+                        {% if session.end_time %}
+                            {{ session.end_time|date:"H:i:s" }}
+                        {% else %}
+                            <em>Ongoing...</em>
+                        {% endif %}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No breaks taken today.</p>
+        {% endif %}
+    </div>
+
+</div>
+
+
+
+    <!-- Info Section -->
+    <!-- Info Section -->
+<div id="info" class="section hidden">
+    <div class="max-w-md mx-auto bg-gray-800 rounded-lg overflow-hidden shadow-lg p-6">
+        <div class="flex flex-col items-center space-y-4">
+            <!-- Avatar -->
+            <div class="w-24 h-24 bg-blue-600 rounded-full flex items-center justify-center text-3xl font-bold">
+                {{ employee.username|slice:":1"|upper }}
+            </div>
+            <!-- Profile Info -->
+            <div class="text-center">
+                <h2 class="text-xl font-semibold text-blue-300">{{ employee.username }}</h2>
+                <p class="text-gray-400 text-sm">👨‍💻 {{ employee.department }}</p>
+            </div>
+
+            <div class="w-full border-t border-gray-700 pt-4 space-y-2 text-sm text-gray-300">
+                <p><strong>Email:</strong> {{ employee.email }}</p>
+                <p><strong>Department:</strong> {{ employee.department }}</p>
+                <p><strong>Contact:</strong> {{ employee.contact }}</p>
+                 <p><strong>Address:</strong> {{ employee.address}}</p>
+                
+                <p><strong>Joining Date:</strong> {{ employee.joining_date }}</p>
+            </div>
+
+            <!-- Optional Edit Profile -->
+            <!--
+            <button class="mt-4 bg-blue-600 px-4 py-2 rounded hover:bg-blue-700">
+                ✏️ Edit Profile
+            </button>
+            -->
+        </div>
+    </div>
+</div>
+
+
+    <!-- Settings Section -->
+   <!-- Settings Section -->
+<div id="settings" class="section hidden">
+    <div class="max-w-md mx-auto bg-gray-800 rounded-lg p-6 shadow-md">
+        <h3 class="text-lg font-semibold text-blue-400 mb-4">⚙️ Settings</h3>
+
+        <!-- Password Update -->
+        <div class="mb-4">
+            <label class="block mb-1 text-gray-300">Current Password</label>
+            <input type="password" placeholder="Enter Current Password"
+                   class="w-full p-2 rounded bg-gray-700 border border-gray-600 text-white">
+        </div>
+        <div class="mb-4">
+            <label class="block mb-1 text-gray-300">New Password</label>
+            <input type="password" placeholder="New Password"
+                   class="w-full p-2 rounded bg-gray-700 border border-gray-600 text-white">
+        </div>
+        <div class="mb-4">
+            <input type="password" placeholder="Confirm Password"
+                   class="w-full p-2 rounded bg-gray-700 border border-gray-600 text-white">
+        </div>
+        <button class="bg-blue-600 px-4 py-2 rounded hover:bg-blue-700 text-white">🔒 Update Password</button>
+
+        <!-- Divider -->
+        <hr class="my-6 border-gray-600">
+
+        <!-- Notifications -->
+        <div class="mb-4">
+            <label class="text-gray-300 font-medium">🔔 Notifications</label>
+            <div class="flex items-center mt-2">
+                <input type="checkbox" id="emailNotif" class="mr-2">
+                <label for="emailNotif" class="text-gray-400">Email Alerts</label>
+            </div>
+            <div class="flex items-center mt-2">
+                <input type="checkbox" id="smsNotif" class="mr-2">
+                <label for="smsNotif" class="text-gray-400">SMS Notifications</label>
+            </div>
+        </div>
+
+        <!-- Theme Toggle -->
+        <div class="mb-2 mt-6">
+            <label class="text-gray-300 font-medium">🌓 Theme</label>
+            <select class="w-full mt-2 p-2 rounded bg-gray-700 border border-gray-600 text-white">
+                <option selected>Dark</option>
+                <option>Light</option>
+            </select>
+        </div>
+    </div>
+</div>
+
+
+  </main>
+
+<script>
+ // ✅ Show/Hide Sections
+  function showSection(sectionId) {
+      const sections = document.querySelectorAll('.section');
+      sections.forEach(section => section.style.display = 'none');
+      document.getElementById(sectionId).style.display = 'block';
+  }
+
+  // ✅ Live Clock
+  function updateClock() {
+      const now = new Date();
+      document.getElementById('clock').innerText = now.toLocaleString();
+  }
+  setInterval(updateClock, 1000);
+  updateClock();
+
+  // ✅ Check-in Handler
+  if (checkinBtn) {
+    checkinBtn.addEventListener('click', function () {
+        fetch('/accounts/attendance/mark/')
+            .then(response => response.json())
+            .then(data => {
+                alert(data.message);
+                const now = new Date().toLocaleTimeString();
+                document.getElementById('checkinTime').innerText = "Check-in Time: " + now;
+            });
+    });
+}
+
+  // ✅ Start Break Handler
+  const startBreakBtn = document.getElementById('startBreak');
+  const endBreakBtn = document.getElementById('endBreak');
+  if (startBreakBtn) {
+      startBreakBtn.addEventListener('click', function () {
+          fetch('/accounts/attendance/start-break/')
+              .then(response => response.json())
+              .then(data => {
+                  if (data.message) {
+                      startBreakBtn.classList.add('hidden');
+                      endBreakBtn.classList.remove('hidden');
+                      startBreakTimer();
+                  }
+              });
+      });
+  }
+
+  // ✅ End Break Handler
+  if (endBreakBtn) {
+    endBreakBtn.addEventListener('click', function () {
+        fetch('/accounts/attendance/end-break/')
+            .then(response => response.json())
+            .then(data => {
+                startBreakBtn.classList.remove('hidden');
+                endBreakBtn.classList.add('hidden');
+                stopBreakTimer();
+                document.getElementById('totalBreakTime').innerText = "Break Ended. Duration: " + document.getElementById('breakTimer').innerText;
+            });
+    });
+}
+  // ✅ Checkout Handler
+  if (checkoutBtn) {
+    checkoutBtn.addEventListener('click', function () {
+        fetch('/accounts/attendance/checkout/')
+            .then(response => response.json())
+            .then(data => {
+                alert(data.message);
+                const now = new Date().toLocaleTimeString();
+                document.getElementById('checkoutTime').innerText = "Checkout Time: " + now;
+            });
+    });
+}
+
+  // ✅ Break Timer Logic
+  let breakStartTime, breakInterval;
+  function startBreakTimer() {
+      breakStartTime = Date.now();
+      breakInterval = setInterval(function () {
+          const elapsed = Date.now() - breakStartTime;
+          const hours = Math.floor(elapsed / 3600000);
+          const minutes = Math.floor((elapsed % 3600000) / 60000);
+          const seconds = Math.floor((elapsed % 60000) / 1000);
+          document.getElementById('breakTimer').innerText =
+              `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+      }, 1000);
+  }
+
+  function stopBreakTimer() {
+      clearInterval(breakInterval);
+  } 
+
+</script>
+
+{% if user.is_authenticated %}
+<script>
+sessionStorage.setItem("django_user",
+   JSON.stringify({name: "{{ user.username }}", role: "{{ user.role }}" }));
+</script>
+{% endif %}
+
+
+
+</body>
+</html>

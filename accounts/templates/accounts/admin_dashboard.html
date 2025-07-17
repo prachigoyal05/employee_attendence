@@ -1,0 +1,461 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body class="bg-gray-900 text-white">
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-blue-900 shadow">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">Admin Dashboard</a>
+    </div>
+    <a href="{% url 'logout' %}" class="text-white hover:text-red-400"></a>
+
+</nav>
+
+<div class="d-flex">
+    
+   <!-- Sidebar -->
+
+
+<aside class="w-64 bg-[#1e293b] h-screen p-6 shadow-xl">
+    <h2 class="text-xl font-bold text-white mb-6">Admin Menu</h2>
+    <ul class="space-y-4">
+        <li>
+            <button onclick="showSection('home')" class="w-full flex items-center p-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+                🏠 <span class="ml-2">Home</span>
+            </button>
+        </li>
+        <li>
+            <button onclick="showSection('employees')" class="w-full flex items-center p-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition">
+                👨‍💼 <span class="ml-2">Employees</span>
+            </button>
+        </li>
+        <li>
+    <button onclick="showSection('daily-attendance')" class="w-full flex items-center p-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+        🗓️ <span class="ml-2">Daily Attendance</span>
+    </button>
+        </li>
+
+        <li>
+            <button onclick="showSection('reports')" class="w-full flex items-center p-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition">
+                📊 <span class="ml-2">Reports</span>
+            </button>
+        </li>
+
+        <li>
+    <a href="{% url 'export_attendance' %}"
+       class="no-underline w-full flex items-center p-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+        🖨️ <span class="ml-2">Export CSV</span>
+    </a>
+       </li>
+    
+        <li>
+    <button onclick="showSection('device-logs')" 
+            class="w-full flex items-center p-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition">
+     <i class="fa fa-network-wired opacity-75"></i>
+       💾 <span>Device logs</span>
+    </button>
+</li>
+
+    
+        <div class="mt-6">
+    <a href="{% url 'logout' %}" class="no-underline w-full flex items-center justify-center p-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition">
+            🚪 <span class="ml-2">Logout</span>
+    </a>
+        </div>
+    </ul>
+</aside>
+
+
+    <!-- Main Content -->
+    <main class="flex-1 p-8 space-y-8">
+        <!-- Home Section -->
+        <div id="home" class="section" style="display: block;"</div>
+            <div class="grid grid-cols-4 gap-4 text-center">
+                <div class="bg-blue-600 p-4 rounded">Total Employees: 4</div>
+                <div class="bg-blue-600 p-4 rounded">Present Today: 3</div>
+                <div class="bg-blue-600 p-4 rounded">Absent: 1</div>
+                <div class="bg-blue-600 p-4 rounded">Pending Checkouts: 2</div>
+            </div>
+            <p id="clock" class="text-right text-sm text-gray-400"></p>
+<script>
+  function updateClock() {
+    const now = new Date();
+    document.getElementById('clock').innerText = now.toLocaleString();
+  }
+  setInterval(updateClock, 1000);
+  updateClock();
+</script>
+  
+    <div class="bg-gray-800 p-4 rounded mt-4">
+  <h3 class="text-lg font-semibold mb-2 text-blue-300">Recent Activity</h3>
+  <ul class="text-sm">
+    <li>Prachi logged in at 9:01 AM</li>
+    <li>Vijay checked out late at 7:10 PM</li>
+    <li>Priyanka forgot to check out</li>
+  </ul>
+    </div>
+    <div class="bg-gray-800 p-4 rounded mt-4">
+  <h3 class="text-lg font-semibold mb-2 text-blue-300">Today’s Summary</h3>
+  <p>3 Employees present</p>
+  <p>1 Employee absent</p>
+  <p>2 Late logins</p>
+    </div>
+    
+    <div class="flex gap-4 mt-4">
+  <a href="#" class="bg-green-600 px-4 py-2 rounded hover:bg-purple-600">Add New Employee</a>
+  <a href="#" class="bg-green-600 px-4 py-2 rounded hover:bg-purple-600">Mark Attendance</a>
+    </div>
+
+
+        </div>
+
+        <!-- Employee Section -->
+        <div id="employees" class="section hidden">
+            <h2 class="text-xl font-bold mb-4 text-blue-400">Employee Details</h2>
+
+            <div class="flex flex-wrap items-center gap-4 mb-4">
+                <input type="text" id="searchName" placeholder="Search by name"
+                       class="p-2 rounded bg-gray-800 text-white border border-blue-500" />
+                <input type="text" id="searchDept" placeholder="Search by department"
+                       class="p-2 rounded bg-gray-800 text-white border border-blue-500" />
+            </div>
+
+             <table class="table-auto w-full text-white">
+        <thead class="bg-gray-800">
+            <tr>
+                <th class="p-2">ID</th>
+                <th class="p-2">Name</th>
+                <th class="p-2">Contact</th>
+                <th class="p-2">Address</th>
+                <th class="p-2">Joining</th>
+                <th class="p-2">Department</th>
+                <th class="p-2">Check-in</th>
+                
+            </tr>
+        </thead>
+        <tbody id="employeeTable" class="bg-gray-700">
+            <!-- Assuming you're passing a list of employees in the context -->
+{% for employee in employees %}
+<tr>
+    <td class="p-2">{{ employee.id }}</td>
+    <td class="p-2">{{ employee.username }}</td>
+    <td class="p-2">{{ employee.contact }}</td>
+    <td class="p-2">{{ employee.address }}</td>
+    <td class="p-2">{{ employee.joining_date }}</td>
+    <td class="p-2">{{ employee.department }}</td>
+    <!-- <td class="p-2">{{ data.check_in|default:"-" }}</td>
+    <td class="p-2">{{ data.break_duration|default:"-" }}</td> -->
+    <td class="p-2">
+        <a href="{% url 'view_employee' employee.username %}" class="bg-green-500 px-3 py-1 rounded text-white">View</a>
+        <a href="{% url 'edit_employee' employee.username %}" class="bg-blue-500 px-3 py-1 rounded text-white">Edit</a>
+        <a href="{% url 'delete_employee' employee.username %}" class="bg-red-500 px-3 py-1 rounded text-white" onclick="return confirm('Are you sure?')">Delete</a>
+    </td>
+</tr>
+{% endfor %}
+  </tbody>
+    </table>
+        </div>
+
+  
+
+ <!-- daily attendence section -->
+<div id="daily-attendance" class="section hidden">
+    <h2 class="text-blue-400">📊 Attendance for {{ selected_date }}</h2>
+
+    <form method="GET" action="{% url 'admin_dashboard' %}" class="my-4 flex flex-wrap items-center gap-3">
+        <input type="date" name="date" value="{{ selected_date }}" class="p-2 rounded bg-gray-800 border border-blue-400 text-white">
+      <input type="week" name="week"
+           value="{{ request.GET.week|default:'' }}"
+           class="p-2 rounded bg-gray-800 text-white border border-blue-500">
+
+    <!-- Name search -->
+    <input type="text" name="q" placeholder="Search by name"
+           value="{{ request.GET.q|default:'' }}"
+           class="p-2 rounded bg-gray-800 text-white border border-blue-500">
+    <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">Filter</button>
+   
+    
+</form>
+
+    <table class="table table-dark table-bordered mt-4">
+        <thead>
+            <tr>
+                <th>Employee</th>
+                <th>Check In</th>
+                <th>Check Out</th>
+                <th>Status</th>
+                <th>Work Duration</th>
+                <th>Break Duration</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for record in records %}
+                <tr>
+                    <td>{{ record.user.username }}</td>
+                    <td>{{ record.check_in|default:"-" }}</td>
+                    <td>{{ record.checkout|default:"-" }}</td>
+                    <td>{{ record.status }}</td>
+                    <td>
+                        {% if record.total_work_duration %}
+                            {{ record.total_work_duration }}
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if record.total_break_duration %}
+                            {{ record.total_break_duration }}
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+    <!-- export csv -->
+     <!-- <div class="modal fade" id="exportModal" tabindex="-1" aria-labelledby="exportModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content bg-dark text-white">
+      <div class="modal-header border-0">
+        <h5 class="modal-title" id="exportModalLabel">Export Attendance</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+
+      <form action="{% url 'export_attendance' %}" method="get">
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label">From</label>
+            <input type="date" name="start_date" class="form-control">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">To</label>
+            <input type="date" name="end_date" class="form-control">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Employee</label>
+            <select name="user_id" class="form-select">
+              <option value="">All employees</option>
+              {% for u in users %}
+                  <option value="{{ u.id }}">{{ u.username }}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer border-0">
+          <button type="submit" class="btn btn-success w-100">
+              <i class="fa fa-download me-1"></i> Download CSV
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div> -->
+
+<!-- Reports Section -->
+<div id="reports" class="section hidden">
+    <h2 class="text-xl font-bold mb-4 text-blue-400">Attendance Reports</h2>
+    <!-- Summary Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-center mb-6">
+        <div class="bg-blue-700 p-4 rounded shadow">
+            <h3 class="text-lg font-semibold">Average Attendance</h3>
+            <p class="text-2xl font-bold">84%</p>
+        </div>
+        <div class="bg-green-700 p-4 rounded shadow">
+            <h3 class="text-lg font-semibold">Most Punctual Dept</h3>
+            <p class="text-2xl font-bold">Software Testing</p>
+        </div>
+        <div class="bg-red-700 p-4 rounded shadow">
+            <h3 class="text-lg font-semibold">Most Absentees</h3>
+            <p class="text-2xl font-bold">UI Design</p>
+        </div>
+    </div>
+
+    <!-- Department-wise Attendance Table -->
+    <div class="bg-gray-800 p-4 rounded">
+        <h3 class="text-lg font-semibold mb-4 text-blue-300">Department-wise Summary</h3>
+        <table class="table-auto w-full text-white">
+            <thead class="bg-gray-700">
+                <tr>
+                    <th class="p-2">Department</th>
+                    <th class="p-2">Total Employees</th>
+                    <th class="p-2">Average Attendance</th>
+                    <th class="p-2">Top Performer</th>
+                </tr>
+            </thead>
+            <tbody class="bg-gray-600">
+                <tr>
+                    <td class="p-2">Software Testing</td>
+                    <td class="p-2">10</td>
+                    <td class="p-2">91%</td>
+                    <td class="p-2">Prachi</td>
+                </tr>
+                <tr>
+                    <td class="p-2">UI Design</td>
+                    <td class="p-2">8</td>
+                    <td class="p-2">72%</td>
+                    <td class="p-2">Vijay</td>
+                </tr>
+                <tr>
+                    <td class="p-2">Backend</td>
+                    <td class="p-2">5</td>
+                    <td class="p-2">88%</td>
+                    <td class="p-2">Hari Om</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Monthly Chart Placeholder -->
+    <div class="bg-gray-800 p-4 rounded mt-6">
+        <h3 class="text-lg font-semibold mb-4 text-blue-300">Monthly Attendance Trends</h3>
+        <p class="text-gray-400">[Will add chart later]</p>
+    </div>
+</div>
+ <!-- device logs -->
+   <div id="device-logs" class="section hidden">
+  <h2 class="text-2xl font-semibold mb-6 text-white">Device Logs</h2>
+
+  <div class="overflow-x-auto">
+    <form method="get" action="" class="flex flex-wrap gap-4 mb-4 text-sm">
+  <input type="hidden" name="section" value="device-logs"><!-- keep dashboard state -->
+
+  <input name="q" value="{{ request.GET.q }}"
+         placeholder="Search user name..."
+         class="bg-gray-700 text-white px-3 py-2 rounded w-48">
+
+  <input type="date" name="start" value="{{ request.GET.start }}"
+         class="bg-gray-700 text-white px-3 py-2 rounded">
+
+  <input type="date" name="end"   value="{{ request.GET.end }}"
+         class="bg-gray-700 text-white px-3 py-2 rounded">
+
+  <button class="bg-emerald-600 hover:bg-emerald-500 px-4 py-2 rounded">
+      Filter
+  </button>
+</form>
+
+    <table class="table table-dark table-sm w-full">
+      <thead class="bg-gray-800 text-gray-300">
+        <tr>
+          <th>User</th><th>IP address</th><th>Device</th>
+          <th>Browser</th><th>OS</th>
+          <th class="text-end">First seen</th>
+          <th class="text-end">Last seen</th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for log in device_logs %}
+        <tr class="border-b border-gray-800">
+          <td>{{ log.user.username }}</td>
+          <td>{{ log.ip_address }}</td>
+          <td class="capitalize">{{ log.device_type }}</td>
+          <td>{{ log.browser }}</td>
+          <td>{{ log.os }}</td>
+          <td class="text-end">{{ log.first_seen|date:"Y‑m‑d H:i" }}</td>
+          <td class="text-end">{{ log.last_seen|date:"Y‑m‑d H:i" }}</td>
+        </tr>
+      {% empty %}
+        <tr><td colspan="7" class="py‑6 text-center">No devices logged yet.</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+
+
+    </main>
+</div>
+
+<!-- JS for filtering employees -->
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const nameInput = document.getElementById('searchName');
+    const deptInput = document.getElementById('searchDept');
+    const rows = document.querySelectorAll('#employeeTable tr');
+
+    function filterEmployees() {
+        const nameFilter = nameInput.value.toLowerCase();
+        const deptFilter = deptInput.value.toLowerCase();
+
+        rows.forEach(row => {
+            const name = row.cells[1].innerText.toLowerCase();
+            const dept = row.cells[5].innerText.toLowerCase();
+
+            const matchesName = name.includes(nameFilter);
+            const matchesDept = dept.includes(deptFilter);
+
+            row.style.display = (matchesName && matchesDept) ? '' : 'none';
+        });
+    }
+
+    nameInput.addEventListener('input', filterEmployees);
+    deptInput.addEventListener('input', filterEmployees);
+});
+</script>
+
+<!--Attendence-mode toggle and search-->
+<script>
+function toggleAttendanceMode() {
+  const mode = document.getElementById("attendanceMode").value;
+  document.getElementById("dailyAttendanceTable").style.display = mode === 'daily' ? 'table' : 'none';
+  document.getElementById("weeklyAttendanceTable").style.display = mode === 'weekly' ? 'table' : 'none';
+}
+
+function filterAttendance() {
+  const nameFilter = document.getElementById('searchAttendanceName').value.toLowerCase();
+  const deptFilter = document.getElementById('searchAttendanceDept').value.toLowerCase();
+
+  const mode = document.getElementById("attendanceMode").value;
+  const table = mode === 'daily' ? document.getElementById('dailyAttendanceTable') : document.getElementById('weeklyAttendanceTable');
+  const rows = table.querySelectorAll('tbody tr');
+
+  rows.forEach(row => {
+    const name = row.cells[1].innerText.toLowerCase();
+    const dept = row.cells[2].innerText.toLowerCase();
+    const matchesName = name.includes(nameFilter);
+    const matchesDept = dept.includes(deptFilter);
+
+    row.style.display = (matchesName && matchesDept) ? '' : 'none';
+  });
+}
+</script>
+
+<!-- show section -->
+<script>
+function showSection(sectionId) {
+  // Hide every .section div
+  document.querySelectorAll('.section').forEach(sec => {
+    sec.classList.add('hidden');        // Tailwind
+    sec.style.display = 'none';         // fallback if not Tailwind
+  });
+
+  // Show the requested one
+  const active = document.getElementById(sectionId);
+  if (active) {
+    active.classList.remove('hidden');
+    active.style.display = 'block';
+  }
+}
+
+// Show “home” when the page first loads
+document.addEventListener('DOMContentLoaded', () => showSection('home'));
+</script>
+
+
+</body>
+</html>
+{% endblock %}

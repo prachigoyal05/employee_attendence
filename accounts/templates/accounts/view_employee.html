@@ -1,0 +1,19 @@
+<!-- view_employee.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="p-6">
+    <h2 class="text-xl font-bold text-blue-500 mb-4">Employee Details</h2>
+    <ul class="list-disc pl-6">
+        <li><strong>ID:</strong> {{ employee.id }}</li>
+        <li><strong>Name:</strong> {{ employee.username }}</li>
+        <li><strong>Email:</strong> {{ employee.email }}</li>
+        <li><strong>Contact:</strong> {{ employee.contact }}</li>
+        <li><strong>Department:</strong> {{ employee.department }}</li>
+        <li><strong>Joining Date:</strong> {{ employee.joining_date }}</li>
+        <li><strong>Address:</strong> {{ employee.address }}</li>
+    </ul>
+     <a href="{% url 'admin_dashboard' %}" class="text-blue-300 mt-4 inline-block">← Back to Dashboard</a>
+</div>
+{% endblock %}
+

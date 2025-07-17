@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="form-container">
+<h2>Register</h2>
+<form method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary">Register</button>
+    <p class="mt-3 text-center text-blue-300">
+    Already registered <a href="{% url 'login' %}" class="text-blue-500 hover:underline">Login</a>
+</p>
+</form> 
+</div>
+{% endblock %}
