@@ -1,0 +1,199 @@
+
+:root {
+  /* Light theme colors */
+  --primary: #2563eb;          /* Primary blue */
+  --primary-hover: #1d4ed8;    /* Slightly darker blue */
+  --secondary: #64748b;        /* Neutral gray */
+  --background: #d2e9ff;       /* Light gray background */
+  --card-bg: #ffffff;          /* White cards */
+  --text: #1e293b;             /* Dark text */
+  --text-light: #ffffff;       /* Secondary text */
+  --border: #e2e8f0;           /* Light borders */
+  --success: #10b981;          /* Green */
+  --warning: #f59e0b;          /* Amber */
+  --error: #ef4444;            /* Red */
+  
+  /* Spacing */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+  --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+/* Base Styles */
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: var(--background);
+  color: var(--text);
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* Navbar */
+.navbar {
+  background-color: var(--card-bg);
+  border-bottom: 1px solid var(--border);
+  padding: 1rem 2rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.navbar-brand {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--primary);
+}
+
+/* Main Layout */
+.d-flex {
+  display: flex;
+}
+
+/* Sidebar */
+.w-64 {
+  width: 16rem;
+  background-color: var(--card-bg);
+  border-right: 1px solid var(--border);
+}
+
+.bg-\[\#1e293b\] {
+  background-color: var(--card-bg) !important; /* Override dark bg */
+}
+
+/* Buttons */
+.bg-blue-600, .bg-indigo-600 {
+  background-color: var(--primary) !important;
+  color: white !important;
+  border: none;
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius-md);
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.bg-blue-600:hover, .bg-indigo-600:hover {
+  background-color: var(--primary-hover) !important;
+  transform: translateY(-1px);
+}
+
+.bg-red-600 {
+  background-color: var(--error) !important;
+}
+
+/* Cards and Stats */
+.grid-cols-4 > div {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 1.5rem;
+  box-shadow: var(--shadow-sm);
+  text-align: center;
+}
+
+/* Tables */
+.table {
+   width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 0.9rem;
+  background: white;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  margin: 1.5rem 0;
+}
+
+.table thead {
+  background-color: var(--primary);
+  color: white;
+}
+
+
+/* ===== Modern Employee Table ===== */
+.table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 0.9rem;
+  background: white;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  margin: 1.5rem 0;
+}
+
+.table thead {
+  background: #f8fafc;
+  position: sticky;
+  top: 0;
+}
+
+.table th {
+  padding: 1rem 1.2rem;
+  text-align: left;
+  font-weight: 600;
+  color: #334155;
+  border-bottom: 2px solid #e2e8f0;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.5px;
+}
+
+.table td {
+  padding: 1rem 1.2rem;
+  border-bottom: 1px solid #f1f5f9;
+  color: #475569;
+  vertical-align: middle;
+}
+
+/* Forms */
+.bg-gray-800 {
+  background-color: var(--card-bg) !important;
+  border: 1px solid var(--border) !important;
+  color: var(--text) !important;
+}
+
+/* Utility Classes */
+.text-white {
+  color: var(--text) !important;
+}
+
+.bg-gray-900 {
+  background-color: var(--background) !important;
+}
+
+.text-blue-400 {
+  color: var(--primary) !important;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .d-flex {
+    flex-direction: column;
+  }
+  
+  .w-64 {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+  }
+  
+  .grid-cols-4 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+.container.py-5 {
+  background-color: white;
+  padding: 2rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.export-form {
+  background-color: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.5rem;
+  padding: 1.5rem;
+}

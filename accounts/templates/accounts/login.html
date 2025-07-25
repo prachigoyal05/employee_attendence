@@ -107,6 +107,7 @@
 
         <form method="POST" autocomplete="off">     <!-- ✨ turn off autofill -->
     {% csrf_token %}
+    <input type="hidden" name="next" value="{{ request.GET.next }}">
 
     <div class="text-red-400">
         <label for="username" class="form-label text-blue-300">Username</label>

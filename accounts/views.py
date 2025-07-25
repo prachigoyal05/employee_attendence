@@ -51,13 +51,16 @@ def user_login(request):
                   # ── EXPIRE WHEN BROWSER CLOSES ────────────────────────
                 request.session.set_expiry(0)        # cookie dies with tab
                 request.session.modified = True      # ensure cookie is sent
-
-                if user.role == 'admin':
+                
+                next_url = request.GET.get('next') or request.POST.get('next')
+                if next_url:
+                    return redirect(next_url)
+                elif user.role == 'admin':
                     return redirect('admin_dashboard')
                 else:
                     return redirect('employee_dashboard')
-            else:
-                messages.error(request, 'Your email is not verified yet.')
+            # else:
+            #     messages.error(request, 'Your email is not verified yet.')
         else:
             messages.error(request, 'Invalid username or password')
     return render(request, 'accounts/login.html')
@@ -214,28 +217,31 @@ def view_employee(request, username):
     return render(request, 'accounts/view_employee.html', {'employee': employee})
 
 #for editing
+
 class EmployeeForm(forms.ModelForm):
     class Meta:
         model = CustomUser
         fields = ['username', 'email', 'department','contact','address','joining_date']
 
+@login_required
 def edit_employee(request, username):
     employee = get_object_or_404(CustomUser,username=username)
     if request.method == 'POST':
         form = EmployeeForm(request.POST, instance=employee)
         if form.is_valid():
             form.save()
-            return redirect('admin_dashboard')
+            return redirect('employee_list')
     else:
         form = EmployeeForm(instance=employee)
     return render(request, 'accounts/edit_employee.html', {'form': form, 'employee': employee})
 
 #for deleting
+@login_required
 def delete_employee(request, username):
     employee = get_object_or_404(CustomUser, username=username)
     if request.method == 'POST':
         employee.delete()
-        return redirect('admin_dashboard')
+        return redirect('employee_list')
     return render(request, 'accounts/delete_employee.html', {'employee': employee})
 
 #for logout
@@ -308,6 +314,16 @@ def employee_dashboard(request):
         'remaining_break': break_status.remaining_break_time,
         'break_sessions': break_sessions,
     })
+@never_cache
+@login_required(login_url='login')
+def employee_details(request):
+    if request.user.role != 'admin':
+        return redirect('employee_dashboard')
+
+    employees = CustomUser.objects.filter(role='employee')
+    return render(request, 'accounts/employee_details.html', {
+        'employees': employees,
+    })
 
 @staff_member_required
 @login_required(login_url='login')
@@ -315,7 +331,7 @@ def daily_attendance(request):
     today = timezone.now().date()
     records = Attendance.objects.filter(date=today).select_related('user')
 
-    return render(request, 'accounts/admin_attendance.html', {
+    return render(request, 'accounts/daily_attendence.html', {
         'records': records,
         'today': today,
     })
@@ -538,6 +554,7 @@ def export_attendance(request):
         return render(request, "accounts/export_attendance.html", {"users": users})
     # Filter by optional query parameters
     user_id = request.GET.get('user_id')
+    search_name = request.GET.get('search_name')
     start_date = request.GET.get('start_date')  # Format: YYYY-MM-DD
     end_date = request.GET.get('end_date')
 
@@ -546,6 +563,9 @@ def export_attendance(request):
     # 3️⃣  Apply filters
     if user_id:
         qs = qs.filter(user_id=user_id)            # FK column is user_id
+    if search_name:
+        qs = qs.filter(user__username__icontains=search_name)
+
     if start_date and end_date:
         qs = qs.filter(date__range=[start_date, end_date])
     elif start_date:                               # allow single‑day export

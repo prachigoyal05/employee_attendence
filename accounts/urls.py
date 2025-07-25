@@ -19,6 +19,8 @@ urlpatterns = [
     path('attendance/end-break/', views.end_break, name='end_break'),
     path('attendance/checkout/', views.checkout, name='checkout'), 
     path('dashboard/<str:section>/', views.dashboard_router, name='dashboard_router'),
+    # path('admin/employee-details/', views.employee_details, name='employee_details'),
+    # path('admin/daily-attendance/', views.daily_attendance, name='daily_attendance'),
     path('admin/export-attendance/', views.export_attendance, name='export_attendance'),
     path("admin/device-logs/",  views.device_logs, name="device_logs"),
     ]

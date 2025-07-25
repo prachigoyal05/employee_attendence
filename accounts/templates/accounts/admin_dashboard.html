@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
-{% block content %}
 {% load static %}
+{% block content %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,7 +9,9 @@
     <title>Admin Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}?v={% now 'U' %}">
+    <!-- Debug Info -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 </head>
 <body class="bg-gray-900 text-white">
 
@@ -31,30 +34,30 @@
     <ul class="space-y-4">
         <li>
             <button onclick="showSection('home')" class="w-full flex items-center p-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
-                🏠 <span class="ml-2">Home</span>
+                 <span class="ml-2">Home</span>
             </button>
         </li>
         <li>
             <button onclick="showSection('employees')" class="w-full flex items-center p-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition">
-                👨‍💼 <span class="ml-2">Employees</span>
+                 <span class="ml-2">Employees</span>
             </button>
         </li>
         <li>
     <button onclick="showSection('daily-attendance')" class="w-full flex items-center p-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
-        🗓️ <span class="ml-2">Daily Attendance</span>
+         <span class="ml-2">Daily Attendance</span>
     </button>
         </li>
 
         <li>
             <button onclick="showSection('reports')" class="w-full flex items-center p-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition">
-                📊 <span class="ml-2">Reports</span>
+                 <span class="ml-2">Reports</span>
             </button>
         </li>
 
         <li>
     <a href="{% url 'export_attendance' %}"
        class="no-underline w-full flex items-center p-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
-        🖨️ <span class="ml-2">Export CSV</span>
+         <span class="ml-2">Export CSV</span>
     </a>
        </li>
     
@@ -62,14 +65,14 @@
     <button onclick="showSection('device-logs')" 
             class="w-full flex items-center p-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition">
      <i class="fa fa-network-wired opacity-75"></i>
-       💾 <span>Device logs</span>
+        <span>Device logs</span>
     </button>
 </li>
 
     
         <div class="mt-6">
     <a href="{% url 'logout' %}" class="no-underline w-full flex items-center justify-center p-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition">
-            🚪 <span class="ml-2">Logout</span>
+             <span class="ml-2">Logout</span>
     </a>
         </div>
     </ul>
@@ -112,117 +115,142 @@
     </div>
     
     <div class="flex gap-4 mt-4">
-  <a href="#" class="bg-green-600 px-4 py-2 rounded hover:bg-purple-600">Add New Employee</a>
-  <a href="#" class="bg-green-600 px-4 py-2 rounded hover:bg-purple-600">Mark Attendance</a>
+  <a href="#" class="bg-blue-600 px-4 py-2 rounded hover:bg-purple-600">Add New Employee</a>
+  <a href="#" class="bg-blue-600 px-4 py-2 rounded hover:bg-purple-600">Mark Attendance</a>
     </div>
 
 
         </div>
 
         <!-- Employee Section -->
-        <div id="employees" class="section hidden">
-            <h2 class="text-xl font-bold mb-4 text-blue-400">Employee Details</h2>
+        <!-- Employee Section -->
+<div id="employees" class="section hidden bg-white p-6 rounded-lg shadow-sm">
+    <h2 class="text-lg font-semibold mb-4 text-gray-800 border-b pb-2">Employee Details</h2>
 
-            <div class="flex flex-wrap items-center gap-4 mb-4">
-                <input type="text" id="searchName" placeholder="Search by name"
-                       class="p-2 rounded bg-gray-800 text-white border border-blue-500" />
-                <input type="text" id="searchDept" placeholder="Search by department"
-                       class="p-2 rounded bg-gray-800 text-white border border-blue-500" />
-            </div>
+    <div class="flex flex-wrap items-center gap-4 mb-6">
+        <input type="text" id="searchName" placeholder="Search by name"
+               class="px-4 py-2 rounded border border-gray-300 focus:ring-2 focus:ring-blue-200 focus:border-blue-500" />
+        <input type="text" id="searchDept" placeholder="Search by department"
+               class="px-4 py-2 rounded border border-gray-300 focus:ring-2 focus:ring-blue-200 focus:border-blue-500" />
+    </div>
 
-             <table class="table-auto w-full text-white">
-        <thead class="bg-gray-800">
-            <tr>
-                <th class="p-2">ID</th>
-                <th class="p-2">Name</th>
-                <th class="p-2">Contact</th>
-                <th class="p-2">Address</th>
-                <th class="p-2">Joining</th>
-                <th class="p-2">Department</th>
-                <th class="p-2">Check-in</th>
-                
-            </tr>
-        </thead>
-        <tbody id="employeeTable" class="bg-gray-700">
-            <!-- Assuming you're passing a list of employees in the context -->
-{% for employee in employees %}
-<tr>
-    <td class="p-2">{{ employee.id }}</td>
-    <td class="p-2">{{ employee.username }}</td>
-    <td class="p-2">{{ employee.contact }}</td>
-    <td class="p-2">{{ employee.address }}</td>
-    <td class="p-2">{{ employee.joining_date }}</td>
-    <td class="p-2">{{ employee.department }}</td>
-    <!-- <td class="p-2">{{ data.check_in|default:"-" }}</td>
-    <td class="p-2">{{ data.break_duration|default:"-" }}</td> -->
-    <td class="p-2">
-        <a href="{% url 'view_employee' employee.username %}" class="bg-green-500 px-3 py-1 rounded text-white">View</a>
-        <a href="{% url 'edit_employee' employee.username %}" class="bg-blue-500 px-3 py-1 rounded text-white">Edit</a>
-        <a href="{% url 'delete_employee' employee.username %}" class="bg-red-500 px-3 py-1 rounded text-white" onclick="return confirm('Are you sure?')">Delete</a>
-    </td>
-</tr>
-{% endfor %}
-  </tbody>
-    </table>
-        </div>
+    <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-blue-600">
+                <tr>
+                    <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">ID</th>
+                    <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Name</th>
+                    <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Contact</th>
+                    <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Address</th>
+                    <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Joining</th>
+                    <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Department</th>
+                    <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+                {% for employee in employees %}
+                <tr class="hover:bg-gray-50">
+                    <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-800">{{ employee.id }}</td>
+                    <td class="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900">{{ employee.username }}</td>
+                    <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-800">{{ employee.contact }}</td>
+                    <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-800">{{ employee.address }}</td>
+                    <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-800">{{ employee.joining_date }}</td>
+                    <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-800">{{ employee.department }}</td>
+                    <td class="px-4 py-3 whitespace-nowrap text-sm">
+                        <div class="flex space-x-2">
+                            <a href="{% url 'view_employee' employee.username %}" 
+                               class="px-3 py-1 bg-green-100 text-green-800 rounded-md text-xs font-medium hover:bg-green-200">View</a>
+                            <a href="{% url 'edit_employee' employee.username %}" 
+                               class="px-3 py-1 bg-blue-100 text-blue-800 rounded-md text-xs font-medium hover:bg-blue-200">Edit</a>
+                            <a href="{% url 'delete_employee' employee.username %}" 
+                               class="px-3 py-1 bg-red-100 text-red-800 rounded-md text-xs font-medium hover:bg-red-200" 
+                               onclick="return confirm('Are you sure?')">Delete</a>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
 
   
 
- <!-- daily attendence section -->
-<div id="daily-attendance" class="section hidden">
-    <h2 class="text-blue-400">📊 Attendance for {{ selected_date }}</h2>
+<!-- Daily Attendance Section -->
+<div id="daily-attendance" class="section hidden bg-white p-6 rounded-lg shadow-sm">
+    <h2 class="text-lg font-semibold text-gray-800 mb-6 border-b pb-2">📊 Attendance for {{ selected_date }}</h2>
 
-    <form method="GET" action="{% url 'admin_dashboard' %}" class="my-4 flex flex-wrap items-center gap-3">
-        <input type="date" name="date" value="{{ selected_date }}" class="p-2 rounded bg-gray-800 border border-blue-400 text-white">
-      <input type="week" name="week"
-           value="{{ request.GET.week|default:'' }}"
-           class="p-2 rounded bg-gray-800 text-white border border-blue-500">
+    <form method="GET" action="{% url 'admin_dashboard' %}" class="mb-6 flex flex-wrap items-center gap-4">
+        <div class="flex-1 min-w-[200px]">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Date</label>
+            <input type="date" name="date" value="{{ selected_date }}" 
+                   class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
+        </div>
+        
+        <div class="flex-1 min-w-[200px]">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Week</label>
+            <input type="week" name="week" value="{{ request.GET.week|default:'' }}"
+                   class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
+        </div>
+        
+        <div class="flex-1 min-w-[200px]">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Search by Name</label>
+            <input type="text" name="q" placeholder="Employee name"
+                   value="{{ request.GET.q|default:'' }}"
+                   class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
+        </div>
+        
+        <div class="self-end">
+            <button type="submit" 
+                    class="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">
+                Filter
+            </button>
+        </div>
+    </form>
 
-    <!-- Name search -->
-    <input type="text" name="q" placeholder="Search by name"
-           value="{{ request.GET.q|default:'' }}"
-           class="p-2 rounded bg-gray-800 text-white border border-blue-500">
-    <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">Filter</button>
-   
-    
-</form>
-
-    <table class="table table-dark table-bordered mt-4">
-        <thead>
-            <tr>
-                <th>Employee</th>
-                <th>Check In</th>
-                <th>Check Out</th>
-                <th>Status</th>
-                <th>Work Duration</th>
-                <th>Break Duration</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for record in records %}
+    <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-blue-600 text-white">
                 <tr>
-                    <td>{{ record.user.username }}</td>
-                    <td>{{ record.check_in|default:"-" }}</td>
-                    <td>{{ record.checkout|default:"-" }}</td>
-                    <td>{{ record.status }}</td>
-                    <td>
-                        {% if record.total_work_duration %}
-                            {{ record.total_work_duration }}
-                        {% else %}
-                            -
-                        {% endif %}
+                    <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">Employee</th>
+                    <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">Check In</th>
+                    <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">Check Out</th>
+                    <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">Status</th>
+                    <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">Work Duration</th>
+                    <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">Break Duration</th>
+                </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+                {% for record in records %}
+                <tr class="hover:bg-gray-50">
+                    <td class="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900">
+                        {{ record.user.username }}
                     </td>
-                    <td>
-                        {% if record.total_break_duration %}
-                            {{ record.total_break_duration }}
-                        {% else %}
-                            -
-                        {% endif %}
+                    <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-800">
+                        {{ record.check_in|default:"-" }}
+                    </td>
+                    <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-800">
+                        {{ record.checkout|default:"-" }}
+                    </td>
+                    <td class="px-4 py-3 whitespace-nowrap text-sm">
+                        <span class="px-2 py-1 rounded-full text-xs font-medium 
+                            {% if record.status == 'Present' %}bg-green-100 text-green-800
+                            {% elif record.status == 'Absent' %}bg-red-100 text-red-800
+                            {% else %}bg-yellow-100 text-yellow-800{% endif %}">
+                            {{ record.status }}
+                        </span>
+                    </td>
+                    <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-800">
+                        {% if record.total_work_duration %}{{ record.total_work_duration }}{% else %}-{% endif %}
+                    </td>
+                    <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-800">
+                        {% if record.total_break_duration %}{{ record.total_break_duration }}{% else %}-{% endif %}
                     </td>
                 </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 </div>
 
     <!-- export csv -->
@@ -325,51 +353,75 @@
     </div>
 </div>
  <!-- device logs -->
-   <div id="device-logs" class="section hidden">
-  <h2 class="text-2xl font-semibold mb-6 text-white">Device Logs</h2>
+ <div id="device-logs" class="section hidden bg-blue-50 p-6 rounded-lg border border-blue-100">
+  <h2 class="text-xl font-semibold mb-6 text-blue-800 border-b border-blue-200 pb-2 flex items-center gap-2">
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+      <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a1 1 0 110 2H4a1 1 0 110-2V4zm3 1h2v2H7V5zm0 4h2v2H7V9zm0 4h2v2H7v-2z" clip-rule="evenodd" />
+    </svg>
+    Device Access Logs
+  </h2>
 
-  <div class="overflow-x-auto">
-    <form method="get" action="" class="flex flex-wrap gap-4 mb-4 text-sm">
-  <input type="hidden" name="section" value="device-logs"><!-- keep dashboard state -->
+  <div class="mb-6 bg-white p-4 rounded-lg border border-blue-200 shadow-sm">
+    <form method="get" action="" class="flex flex-wrap items-end gap-4">
+      <input type="hidden" name="section" value="device-logs">
+      
+      <div class="flex-1 min-w-[200px]">
+        <label class="block text-sm font-medium text-blue-800 mb-1">Search User</label>
+        <input name="q" value="{{ request.GET.q }}"
+               placeholder="Username..."
+               class="w-full px-3 py-2 border border-blue-200 rounded-md focus:ring-2 focus:ring-blue-300 focus:border-blue-500 bg-blue-50">
+      </div>
+      
+      <div class="flex-1 min-w-[200px]">
+        <label class="block text-sm font-medium text-blue-800 mb-1">From Date</label>
+        <input type="date" name="start" value="{{ request.GET.start }}"
+               class="w-full px-3 py-2 border border-blue-200 rounded-md focus:ring-2 focus:ring-blue-300 focus:border-blue-500 bg-blue-50">
+      </div>
+      
+      <div class="flex-1 min-w-[200px]">
+        <label class="block text-sm font-medium text-blue-800 mb-1">To Date</label>
+        <input type="date" name="end" value="{{ request.GET.end }}"
+               class="w-full px-3 py-2 border border-blue-200 rounded-md focus:ring-2 focus:ring-blue-300 focus:border-blue-500 bg-blue-50">
+      </div>
+      
+      <button type="submit" 
+              class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors h-[42px] shadow-sm">
+        Filter Logs
+      </button>
+    </form>
+  </div>
 
-  <input name="q" value="{{ request.GET.q }}"
-         placeholder="Search user name..."
-         class="bg-gray-700 text-white px-3 py-2 rounded w-48">
-
-  <input type="date" name="start" value="{{ request.GET.start }}"
-         class="bg-gray-700 text-white px-3 py-2 rounded">
-
-  <input type="date" name="end"   value="{{ request.GET.end }}"
-         class="bg-gray-700 text-white px-3 py-2 rounded">
-
-  <button class="bg-emerald-600 hover:bg-emerald-500 px-4 py-2 rounded">
-      Filter
-  </button>
-</form>
-
-    <table class="table table-dark table-sm w-full">
-      <thead class="bg-gray-800 text-gray-300">
+  <div class="overflow-x-auto border border-blue-200 rounded-lg bg-white shadow-sm">
+    <table class="min-w-full divide-y divide-blue-200">
+      <thead class="bg-blue-100">
         <tr>
-          <th>User</th><th>IP address</th><th>Device</th>
-          <th>Browser</th><th>OS</th>
-          <th class="text-end">First seen</th>
-          <th class="text-end">Last seen</th>
+          <th class="px-4 py-3 text-left text-xs font-medium text-blue-800 uppercase tracking-wider">User</th>
+          <th class="px-4 py-3 text-left text-xs font-medium text-blue-800 uppercase tracking-wider">IP Address</th>
+          <th class="px-4 py-3 text-left text-xs font-medium text-blue-800 uppercase tracking-wider">Device</th>
+          <th class="px-4 py-3 text-left text-xs font-medium text-blue-800 uppercase tracking-wider">Browser</th>
+          <th class="px-4 py-3 text-left text-xs font-medium text-blue-800 uppercase tracking-wider">OS</th>
+          <th class="px-4 py-3 text-right text-xs font-medium text-blue-800 uppercase tracking-wider">First Seen</th>
+          <th class="px-4 py-3 text-right text-xs font-medium text-blue-800 uppercase tracking-wider">Last Seen</th>
         </tr>
       </thead>
-      <tbody>
-      {% for log in device_logs %}
-        <tr class="border-b border-gray-800">
-          <td>{{ log.user.username }}</td>
-          <td>{{ log.ip_address }}</td>
-          <td class="capitalize">{{ log.device_type }}</td>
-          <td>{{ log.browser }}</td>
-          <td>{{ log.os }}</td>
-          <td class="text-end">{{ log.first_seen|date:"Y‑m‑d H:i" }}</td>
-          <td class="text-end">{{ log.last_seen|date:"Y‑m‑d H:i" }}</td>
+      <tbody class="bg-white divide-y divide-blue-100">
+        {% for log in device_logs %}
+        <tr class="hover:bg-blue-50">
+          <td class="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-800">{{ log.user.username }}</td>
+          <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-700 font-mono">{{ log.ip_address }}</td>
+          <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-700 capitalize">{{ log.device_type }}</td>
+          <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-700">{{ log.browser }}</td>
+          <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-700">{{ log.os }}</td>
+          <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-700 text-right">{{ log.first_seen|date:"Y-m-d H:i" }}</td>
+          <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-700 text-right">{{ log.last_seen|date:"Y-m-d H:i" }}</td>
         </tr>
-      {% empty %}
-        <tr><td colspan="7" class="py‑6 text-center">No devices logged yet.</td></tr>
-      {% endfor %}
+        {% empty %}
+        <tr>
+          <td colspan="7" class="px-4 py-6 text-center text-sm text-blue-600">
+            No device access logs found
+          </td>
+        </tr>
+        {% endfor %}
       </tbody>
     </table>
   </div>

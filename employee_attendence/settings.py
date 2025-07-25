@@ -66,7 +66,7 @@ MIDDLEWARE = [
     ]
 
 ROOT_URLCONF = 'employee_attendence.urls'  # ✅ Correct
-
+STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / "static"]
 
 TEMPLATES = [
@@ -117,6 +117,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 LOGIN_URL = 'login'
+# LOGIN_REDIRECT_URL = '/login-router/'  # Just once after login
 
 MIDDLEWARE += ['accounts.middleware.NoCacheMiddleware']
 
@@ -131,8 +132,9 @@ USE_I18N = True
 
 USE_TZ = True
 
-SECURE_BROWSER_XSS_FILTER = True
-SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+SESSION_COOKIE_AGE = 3600  # 1 hour
+SESSION_EXPIRE_AT_BROWSER_CLOSE = False
+
 
 
 
